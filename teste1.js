@@ -1,21 +1,20 @@
-var data =  require("./fakeData");
+var data = require("./fakeData");
 
-const getUser = ( req, res, next ) => {
-    
-    var name =  req.query.name;
+const getUser = (req, res, next) => {
+    const { name } = req.query;
+    const queryNameLowerCase = name.toLowerCase();
 
-    for(let i = 0; i < data.length;  i++) {
-        if(i.name == name) {
-            res.send(data[i]);
-        }
+    var user = data.find((user) => user.name.toLowerCase().includes(queryNameLowerCase));
+
+    if (user !== undefined) {
+        res.status(200).json(user);
+    } else {
+        res.status(404).json({ error: "User not found" });
     }
-
 };
 
-const getUsers = ( req, res, next ) => {
-    
-    res.send(data);
-    
+const getUsers = (req, res, next) => {
+    res.status(200).json(data);
 };
 
 module.exports = {
