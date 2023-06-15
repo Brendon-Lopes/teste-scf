@@ -1,15 +1,20 @@
-var data =  require("./fakeData");
+const data = require("./fakeData");
 
-module.exports = function(req, res) {
-  
-    var name =  req.query.name;
+module.exports = function (req, res) {
+    const { name } = req.query;
+    const queryNameLowerCase = name.toLowerCase();
 
-    for(let i = 0; i < data.length;  i++) {
-        if(i.name == name) {
-            data[i] = null;
-        }
+    if (!queryNameLowerCase) {
+        return res.status(400).send({ error: "query parameter 'name' is required" });
     }
 
-    res.send("success");
+    // procurar por nome exato para não haver exclusão acidental
+    const index = data.findIndex((item) => item.name.toLowerCase() === queryNameLowerCase);
 
+    if (index !== -1) {
+        data.splice(index, 1);
+        res.status(204).send();
+    } else {
+        res.status(404).send({ error: "User not found" });
+    }
 };
